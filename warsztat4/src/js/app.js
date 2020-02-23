@@ -32,5 +32,22 @@ $(function () {
         //     starWarsContainer.append(name);
         // }
 
-    var booksName = $();
+    var booksNameContainer = $('.books');
+    var BOOKS_API = 'http://localhost:8282/books';
+
+    function fetchBooks(){
+        $.ajax({
+            url: BOOKS_API,
+            type:'GET'
+        }).done(function (result) {
+            Array.from(result).forEach(function (e) {
+                var title = $('<h2></h2>').text(e.title);
+                var div = $('<div></div>');
+                booksNameContainer.append(title);
+                title.after(div);
+            })
+        })
+    }
+
+    fetchBooks();
 });
