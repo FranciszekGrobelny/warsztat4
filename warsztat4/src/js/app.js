@@ -34,20 +34,28 @@ $(function () {
 
     var booksNameContainer = $('.books');
     var BOOKS_API = 'http://localhost:8282/books';
+    var books;
 
     function fetchBooks(){
         $.ajax({
             url: BOOKS_API,
             type:'GET'
         }).done(function (result) {
+            books = result;
             Array.from(result).forEach(function (e) {
-                var title = $('<h2></h2>').text(e.title);
-                var div = $('<div></div>');
+                var title = $('<h2 class="title"></h2>').text(e.title);
+                var div = $('<div class="description"></div>');
+                div.text(e.id).slideUp();
                 booksNameContainer.append(title);
                 title.after(div);
-            })
-        })
-    }
 
+                title.on('click',function () {
+                    div.slideToggle();
+
+                });
+            })
+        });
+    }
     fetchBooks();
+
 });
