@@ -11,8 +11,8 @@ $(function () {
         this.type = type;
     };
 
-    fetchBooks(BOOKS_API,booksNameContainer);
     deleteSubmit(addBookForm);
+    //fetchBooks(BOOKS_API,booksNameContainer);
 
     submitButton.on('click',function () {
         var newBook = new Book(
@@ -28,9 +28,15 @@ $(function () {
     });
 
     deleteBook(BOOKS_API,booksNameContainer);
-    fetchBooks(BOOKS_API,booksNameContainer);
+
 });
 //-----------------------functions-----------------------------------------------------------
+function deleteSubmit(btn){
+    btn.on('submit', function (e) {
+        e.preventDefault();
+    });
+}
+
 function fetchBooks(api,container){
     $('.books').children().remove();
     $.ajax({
@@ -43,18 +49,18 @@ function fetchBooks(api,container){
             div.text(e.id).slideUp();
             container.append(title);
             title.append(div);
-            addButton(title);
-            title.on('click',function () {
-                div.slideToggle();
-            });
+            addDeleteButton(title);
+            slideId(title,div);
         });
     });
 }
-
-function deleteSubmit(btn){
-    btn.on('submit', function (e) {
-        e.preventDefault();
+function slideId(title,div){
+    title.on('click',function () {
+        div.slideToggle();
     });
+}
+function addDeleteButton(el){
+    el.after('<button class="btn" data-ajax="DELETE">Delete book</button>');
 }
 
 function sendBookToServer(api,book){
@@ -67,20 +73,21 @@ function sendBookToServer(api,book){
     });
 }
 
+function deleteBook(api,container){
+    container.on('click', '.btn',function () {
+        ajaxDelete(api,getTextFromBook($(this)));
+        fetchBooks(api,container);
+    });
+}
 function ajaxDelete(api,el){
     $.ajax({
         url: api+el,
         type:'DELETE'
     });
 }
-
-function deleteBook(api,container){
-    container.on('click', '.btn',function () {
-        ajaxDelete(api,$(this).prev().children().eq(0).text());
-        fetchBooks(api,container);
-    });
+function getTextFromBook(el){
+    //text is also id of book
+    return el.prev().children().eq(0).text()
 }
 
-function addButton(el){
-    el.after('<button class="btn">Delete book</button>');
-}
+
